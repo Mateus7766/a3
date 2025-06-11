@@ -2,7 +2,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
 
-
 public class LocadoraVeiculosMenu {
 
     public static void main(String[] args) {
@@ -84,13 +83,41 @@ public class LocadoraVeiculosMenu {
                     break;
 
                 case 4:
-                    System.out.print("Código do Cliente: ");
+                    if (veiculos.keySet().isEmpty() || clientes.keySet().isEmpty()
+                            || colaboradores.keySet().isEmpty()) {
+                        System.out.println(
+                                "É necessário cadastrar, no minimo, um veículo, um cliente e um colaborador antes de realizar uma locação.");
+                        break;
+                    }
+                    System.out.println("\n==== Veiculos Disponíveis ====");
+                    for (String cod : veiculos.keySet()) {
+                        Map<String, String> veiculo = veiculos.get(cod);
+                        System.out.println("\nCódigo: " + cod + "\n Placa: " + veiculo.get("placa") +
+                                "\n Marca: " + veiculo.get("marca") + "\n Modelo: " + veiculo.get("modelo"));
+                    }
+                    System.out.println("\n==== Clientes Cadastrados ====");
+                    for (String cod : clientes.keySet()) {
+                        System.out.println("\nCódigo: " + cod + ", Nome " + clientes.get(cod));
+                    }
+                    System.out.print("\nCódigo do Cliente: ");
                     String codCliLoc = sc.nextLine();
-                    System.out.print("Código do Colaborador: ");
+
+                    System.out.println("\n==== Colaboradores Cadastrados ====");
+                    for (String cod : colaboradores.keySet()) {
+                        System.out.println("\nCódigo: " + cod + ", Nome: " + colaboradores.get(cod).get("nome"));
+                    }
+                    System.out.print("\nCódigo do Colaborador: ");
                     String codColLoc = sc.nextLine();
-                    System.out.print("Código do Veículo: ");
+
+                    System.out.println("\n==== Veículos Cadastrados ====");
+                    for (String cod : veiculos.keySet()) {
+                        Map<String, String> veiculo = veiculos.get(cod);
+                        System.out.println("\nCódigo: " + cod + ", Placa: " + veiculo.get("placa") +
+                                ", Marca: " + veiculo.get("marca") + ", Modelo: " + veiculo.get("modelo"));
+                    }
+                    System.out.print("\nCódigo do Veículo: ");
                     String codVeicLoc = sc.nextLine();
-                    System.out.print("Quantidade de dias: ");
+                    System.out.print("\nQuantidade de dias: ");
                     String dias = sc.nextLine();
 
                     if (!clientes.containsKey(codCliLoc)) {
@@ -113,9 +140,12 @@ public class LocadoraVeiculosMenu {
                     double valorTotal = valorAluguel * diasInt;
                     double valorTotalComDesconto = valorTotal;
 
-                    if (diasInt > 30) valorTotalComDesconto *= 0.80;
-                    else if (diasInt > 15) valorTotalComDesconto *= 0.90;
-                    else if (diasInt > 5) valorTotalComDesconto *= 0.95;
+                    if (diasInt > 30)
+                        valorTotalComDesconto *= 0.80;
+                    else if (diasInt > 15)
+                        valorTotalComDesconto *= 0.90;
+                    else if (diasInt > 5)
+                        valorTotalComDesconto *= 0.95;
 
                     double valorSeguro = valorTotal * 0.25;
 
@@ -145,50 +175,87 @@ public class LocadoraVeiculosMenu {
                     System.out.println("Valor do seguro: R$ " + valorSeguro);
                     System.out.println("Valor total da locação: R$ " + (valorTotal + valorSeguro));
                     if (valorTotalComDesconto != valorTotal) {
-                        System.out.println("Valor total da locação com desconto: R$ " + (valorTotalComDesconto + valorSeguro));
+                        System.out.println(
+                                "Valor total da locação com desconto: R$ " + (valorTotalComDesconto + valorSeguro));
                     }
 
                     break;
 
                 case 5:
-                    System.out.println("\n==== RELATÓRIO DE VEÍCULOS ====");
-                    for (String cod : veiculos.keySet()) {
-                        System.out.println("Código: " + cod + ", Dados: " + veiculos.get(cod));
+                    System.out.println("\n==== TIPO DE RELTÓRIO ====");
+                    System.out.println("1 - Relatório de veículos");
+                    System.out.println("2 - Relatório de clientes");
+                    System.out.println("3 - Relatório de colaboradores");
+                    System.out.println("4 - Relatório de locações");
+                    System.out.println("0 - Voltar");
+                    int relatorioOpcao = sc.nextInt();
+                    sc.nextLine();
+                    switch (relatorioOpcao) {
+                        case 1:
+                            if (veiculos.isEmpty()) {
+                                System.out.println("Nenhum veículo cadastrado, relatório indiponivel!");
+                                break;
+                            }
+                            System.out.println("\n==== RELATÓRIO DE VEÍCULOS ====");
+                            for (String cod : veiculos.keySet()) {
+                                System.out.println("Código: " + cod + ", Dados: " + veiculos.get(cod));
+                            }
+                            break;
+                        case 2:
+                            if (clientes.isEmpty()) {
+                                System.out.println("Nenhum cliente cadastrado, relatório indiponivel!");
+                                break;
+                            }
+                            System.out.println("\n==== RELATÓRIO DE CLIENTES ====");
+                            for (String cod : clientes.keySet()) {
+                                System.out.println("Código: " + cod + ", Nome: " + clientes.get(cod).get("nome"));
+                            }
+                            break;
+                        case 3:
+                            if (colaboradores.isEmpty()) {
+                                System.out.println("Nenhum colaborador cadastrado, relatório indiponivel!");
+                                break;
+                            }
+                            System.out.println("\n==== RELATÓRIO DE COLABORADORES ====");
+                            for (String cod : colaboradores.keySet()) {
+                                System.out.println("Código: " + cod + ", Nome: " + colaboradores.get(cod).get("nome"));
+                            }
+                            break;
+                        case 4:
+                            if (locacoes.isEmpty()) {
+                                System.out.println("Nenhuma locação realizada, relatório indiponivel!");
+                                break;
+                            }
+                            double somaTotalLocacoes = 0.0;
+                            double somaTotalSeguros = 0.0;
+                            double somaTotalComDesconto = 0.0;
+
+                            System.out.println("\n==== RELATÓRIO DE LOCAÇÕES ====");
+                            for (String id : locacoes.keySet()) {
+                                Map<String, String> loc = locacoes.get(id);
+                                System.out.println("ID: " + id + ", Dados: " + loc);
+
+                                double valorLoc = Double.parseDouble(loc.get("valor_total"));
+                                double valorSeg = Double.parseDouble(loc.get("valor_seguro"));
+                                double valorDesc = Double.parseDouble(loc.get("valor_total_com_desconto"));
+
+                                somaTotalLocacoes += valorLoc;
+                                somaTotalSeguros += valorSeg;
+                                somaTotalComDesconto += valorDesc;
+                            }
+
+                            System.out.println("\n==== TOTAIS GERAIS ====");
+                            System.out.println("Total de locações: R$ " + somaTotalLocacoes);
+                            System.out.println("Total de seguros: R$ " + somaTotalSeguros);
+                            System.out.println("Total final com descontos: R$ " + somaTotalComDesconto);
+                            break;
+                        case 0:
+                            System.out.println("Voltando ao menu principal...");
+                            break;
+                        default:
+                            System.out.println("Opção inválida!");
+                            break;
                     }
-
-                    System.out.println("\n==== RELATÓRIO DE CLIENTES ====");
-                    for (String cod : clientes.keySet()) {
-                        System.out.println("Código: " + cod + ", Nome: " + clientes.get(cod).get("nome"));
-                    }
-
-                    System.out.println("\n==== RELATÓRIO DE COLABORADORES ====");
-                    for (String cod : colaboradores.keySet()) {
-                        System.out.println("Código: " + cod + ", Nome: " + colaboradores.get(cod).get("nome"));
-                    }
-
-                    double somaTotalLocacoes = 0.0;
-                    double somaTotalSeguros = 0.0;
-                    double somaTotalComDesconto = 0.0;
-
-                    System.out.println("\n==== RELATÓRIO DE LOCAÇÕES ====");
-                    for (String id : locacoes.keySet()) {
-                        Map<String, String> loc = locacoes.get(id);
-                        System.out.println("ID: " + id + ", Dados: " + loc);
-
-                        double valorLoc = Double.parseDouble(loc.get("valor_total"));
-                        double valorSeg = Double.parseDouble(loc.get("valor_seguro"));
-                        double valorDesc = Double.parseDouble(loc.get("valor_total_com_desconto"));
-
-                        somaTotalLocacoes += valorLoc;
-                        somaTotalSeguros += valorSeg;
-                        somaTotalComDesconto += valorDesc;
-                    }
-
-                    System.out.println("\n==== TOTAIS GERAIS ====");
-                    System.out.println("Total de locações: R$ " + somaTotalLocacoes);
-                    System.out.println("Total de seguros: R$ " + somaTotalSeguros);
-                    System.out.println("Total final com descontos: R$ " + somaTotalComDesconto);
-
                     break;
 
                 case 0:
